@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -38,45 +39,25 @@ public class SocialMediaController {
     // Registration
     @PostMapping("register")
     public ResponseEntity<Account> registerAccount(@RequestBody Account account){
-        String validate = accountService.validate(account.getUsername(), account.getPassword());
-        // if username already exist: duplicate
-        if(validate.equals("duplicate")){
-            return ResponseEntity.status(409).body(null);
-        } 
-        // if other conditions not met: others
-        else if(validate.equals("others")){
-            return ResponseEntity.status(400).body(null);
-        } else {
-            Account register_account = accountService.register(account);
-            return ResponseEntity.ok().body(register_account);
-        }
+        Account register_account = accountService.register(account);
+        return ResponseEntity.ok().body(register_account);
     }
 
     // login
     @PostMapping("login")
     public ResponseEntity<Account> loginAccount(@RequestBody Account account){
-        Account login_account = accountService.login(account);
-        if (login_account != null){
-            return ResponseEntity.ok().body(login_account);
-        } else {
-            return ResponseEntity.status(401).body(null);
-        }
+        Account login_account = accountService.login(account); 
+        return ResponseEntity.ok().body(login_account);
     }
 
     // Message end-points
     // create new message
     @PostMapping("messages")
     public ResponseEntity<Message> createMessageHandler(@RequestBody Message message){
-        Account account = accountService.getAccount(message.getPostedBy());
-        if(account == null){
-            return ResponseEntity.status(400).body(null);
-        }
+        accountService.checkAccount(message.getPostedBy());
+        
         Message new_message = messageService.createMessage(message);
-        if(new_message != null){
-            return ResponseEntity.ok().body(new_message);
-        } else{
-            return ResponseEntity.status(400).body(new_message);
-        }
+        return ResponseEntity.ok().body(new_message);
     }
 
     // get all messages
@@ -107,11 +88,8 @@ public class SocialMediaController {
     // update a message
     @PatchMapping("messages/{message_id}")
     public ResponseEntity<String> updateMessageHandler(@PathVariable int message_id, @RequestBody Message message){
-        Message updatedMessage = messageService.updateMessage(message_id, message.getMessageText());
-        if (updatedMessage != null){
-            return ResponseEntity.ok().body("1");
-        } 
-        return ResponseEntity.status(400).body(null);
+        messageService.updateMessage(message_id, message.getMessageText());
+        return ResponseEntity.ok().body("1");
     }
 
     @GetMapping("accounts/{account_id}/messages")

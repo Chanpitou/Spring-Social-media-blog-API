@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Account;
+import com.example.exception.BadRequestException;
+import com.example.exception.DuplicateUsernameException;
+import com.example.exception.UnauthorizedException;
 import com.example.repository.AccountRepository;
 
 @Service
@@ -18,8 +21,7 @@ public class AccountService {
     }
 
     // Registration
-    public Account register(Account account) {
-
+    public Account register(Account account) throws BadRequestException, DuplicateUsernameException {
         final boolean ACCOUNT_VALIDATED = validate(account.getUsername(), account.getPassword()).equals("valid");
         
         if (ACCOUNT_VALIDATED){
@@ -32,26 +34,23 @@ public class AccountService {
     }
 
     // Login
-    public Account login(Account account){
-        Optional<Account> login_account = accountRepository.findByUsername(account.getUsername());
-        if (!login_account.isPresent()){
-            return null;
-        } 
+    public Account login(Account account) throws UnauthorizedException{
+        Account login_Account = accountRepository.findByUsername(account.getUsername())
+            .orElseThrow(() -> new UnauthorizedException("Account with username " + account.getUsername() + " does not exist."));
         
-        Account get_account = login_account.get();
         // login requirements
-        final boolean USERNAME_EQUALS = account.getUsername().equals(get_account.getUsername());
-        final boolean PASSWORD_EQUALS = account.getPassword().equals(get_account.getPassword());
+        final boolean USERNAME_EQUALS = account.getUsername().equals(login_Account.getUsername());
+        final boolean PASSWORD_EQUALS = account.getPassword().equals(login_Account.getPassword());
 
         if( USERNAME_EQUALS && PASSWORD_EQUALS ){
-            return get_account;
-        } else{
-            return null;
-        }
+            return login_Account;
+        } 
+        throw new UnauthorizedException("Given Username or Password does not match.");
+
     }
 
     // (helper function) validate the given username and password
-    public String validate(String username, String password){
+    public String validate(String username, String password) throws BadRequestException, DuplicateUsernameException{
         Optional<Account> account = accountRepository.findByUsername(username);
 
         // conditions for registration
@@ -60,21 +59,17 @@ public class AccountService {
         final boolean USERNAME_EXIST = account.isPresent();
 
         if(USERNAME_BLANK || PASSWORD_TOO_SHORT) {
-            return "others";
+            throw new BadRequestException("The given Username or Password does not meet the requirement.");
         } else if(USERNAME_EXIST){
-            return "duplicate";
+            throw new DuplicateUsernameException("The given Username " + username + " alreadys exist.");
         } else {
             return "valid";
         }
     }
 
-    // (Helper function) get account
-    public Account getAccount(int account_id){
-        Optional<Account> account = accountRepository.findById(account_id);
-        if(account.isPresent()){
-            return account.get();
-        }
-        return null;
+    // (Helper function) check if an account exist
+    public void checkAccount(int account_id) throws BadRequestException{
+        accountRepository.findById(account_id)
+                .orElseThrow(() -> new BadRequestException("Account with id " + account_id + " does not exist."));
     }
-
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Message;
+import com.example.exception.BadRequestException;
 import com.example.repository.MessageRepository;
 
 @Service
@@ -18,13 +19,13 @@ public class MessageService {
     }
 
     // create a new message
-    public Message createMessage(Message message){
+    public Message createMessage(Message message) throws BadRequestException{
         // conditions to create a new message
         final boolean MESSAGE_TEXT_BLANK = message.getMessageText().length() == 0;
         final boolean MESSAGE_TEXT_TOO_LONG = message.getMessageText().length() >= 225;
 
         if( MESSAGE_TEXT_BLANK || MESSAGE_TEXT_TOO_LONG ){
-            return null;
+            throw new BadRequestException("The given message_text does not meet the requirement.");
         } else{
             return messageRepository.save(message);
         }
@@ -50,22 +51,19 @@ public class MessageService {
     }
 
     // update message given message id
-    public Message updateMessage(int message_id, String message_text){
-        Message updated_message = getMessageById(message_id);
+    public void updateMessage(int message_id, String message_text) throws BadRequestException{
+        Message updated_message = messageRepository.findById(message_id)
+                .orElseThrow(() -> new BadRequestException("Message with id " + message_id + " does not exist."));
         
         // update conditions
         final boolean MESSAGE_BLANK = message_text.length() == 0;
-        final boolean MESSAGE_LENGTH_EXCEEDED = message_text.length() >= 255;
-        final boolean MESSAGE_EXIST = updated_message != null;
+        final boolean MESSAGE_LENGTH_EXCEEDED = message_text.length() > 255;
         
         if (MESSAGE_BLANK || MESSAGE_LENGTH_EXCEEDED) {
-            return null;
-        } else if (MESSAGE_EXIST) {
-            updated_message.setMessageText(message_text);
-            return messageRepository.save(updated_message);
-        } else {
-            return null;
-        }
+            throw new BadRequestException("The new message_text does meet the specifications.");
+        } 
+        updated_message.setMessageText(message_text);
+        messageRepository.save(updated_message);
     }
 
     // get all messages from user given account id
