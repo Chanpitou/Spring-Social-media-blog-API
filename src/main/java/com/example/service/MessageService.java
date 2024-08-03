@@ -18,6 +18,7 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
+    
     // create a new message
     public Message createMessage(Message message) throws BadRequestException{
         // conditions to create a new message
