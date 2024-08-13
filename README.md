@@ -8,6 +8,65 @@ This project will be a backend for a hypothetical social media app, where we mus
 
 In our hypothetical micro-blogging or messaging app, any user should be able to see all of the messages posted to the site, or they can see the messages posted by a particular user. In either case, we require a backend which is able to deliver the data needed to display this information as well as process actions like logins, registrations, message creations, message updates, and message deletions.
 
+## Features Implemented
+
+1. **User Registration:**  
+   - Endpoint: `POST /register`
+   - Request body should include: username (varchar(255)), password (varchar(255))
+   - Allows users to create new accounts.
+   
+2. **User Login:**  
+   - Endpoint: `POST /login`
+   - Request body should include: username (varchar(255)), password (varchar(255))
+   - Authenticates users based on their username and password.
+   
+3. **Message Creation:**  
+   - Endpoint: `POST /messages`
+   - Request body should include: posted_by (integer), message_text (varchar(255)), time_posted_epoch (long)
+   - Allows users to submit new messages.
+   
+4. **Retrieve All Messages:**  
+   - Endpoint: `GET /messages`
+   - Retrieves all messages posted by users.
+   
+5. **Retrieve Message by ID:**  
+   - Endpoint: `GET /messages/{message_id}`
+   - Retrieves a specific message by its ID.
+   
+6. **Delete Message:**  
+   - Endpoint: `DELETE /messages/{message_id}`
+   - Deletes a specific message by its ID.
+   
+7. **Update Message:**  
+   - Endpoint: `PATCH /messages/{message_id}`
+   - Request body should include: message_text (varchar(255))
+   - Updates the text of a specific message by its ID.
+   
+8. **Retrieve Messages by User:**  
+   - Endpoint: `GET /accounts/{account_id}/messages`
+   - Retrieves all messages posted by a specific user.
+     
+## Technologies Used
+The project is developed using:
+- **Spring Boot**
+- **Spring Data**
+- **Spring Framework**
+
+## Setup / Getting Started
+
+To set up and run this project locally, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Chanpitou/Spring-Social-media-blog-API.git
+   cd Spring-Social-media-blog-API
+   ```
+2. **Run the program:**
+   - Run the provided Main.java using your preferred IDE (i.e. VS Code, IntelliJ IDE)
+   
+3. **Test the application:**
+   - You can use tools like Postman, ThunderClient, or cURL to interact with the API endpoints listed in the "Features Implemented" section.
+
 ## Database Tables 
 
 The following tables will be initialized in your project's built-in database upon startup using the configuration details in the application.properties file and the provided SQL script.
@@ -28,22 +87,7 @@ timePostedEpoch long,
 foreign key (postedBy) references Account(accountId)
 ```
 
-# Spring Technical Requirement
-
-## Project must leverage the Spring Boot Framework
-
-Java classes have been provided, but your entire project MUST leverage the Spring framework.
-In addition to functional test cases, "SpringTest" will verify that you have leveraged the Spring framework, Spring Boot, Spring MVC, and Spring Data.
-SpringTest will verify the following
-
- - That you have, by any means, have a bean for the AccountService, MessageService, AccountRepository, MessageRepository, and SocialMediaController classes
- - That AccountRepository and MessageRepository are working JPARepositories based on their corresponding Account and Message entities
- - That your Spring Boot app leverages MVC by checking for Spring's default error message structure.
- 
-The app will already be a Spring Boot app with a valid application.properties and valid database entities at the start.
-
-# User Stories
-
+# # Usage of the project
 ## 1: Our API should be able to process new User registrations.
 
 As a user, I should be able to create a new Account on the endpoint POST localhost:8080/register. The body will contain a representation of a JSON Account, but will not contain an accountId.
@@ -102,5 +146,10 @@ As a user, I should be able to submit a GET request on the endpoint GET localhos
 ## 9: The Project utilizes the Spring Framework.
 
 - The project was created leveraging the spring framework, including dependency injection, autowire functionality and/or Spring annotations.
+
+# Contributors and License information
+This project is licensed under the MIT License
+- **Revature-PEP** - Developer(s)
+- **Chanpitou Um** - Developer
 
 # Good luck!
