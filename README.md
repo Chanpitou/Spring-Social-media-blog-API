@@ -62,7 +62,7 @@ To set up and run this project locally, follow these steps:
    cd Spring-Social-media-blog-API
    ```
 2. **Run the program:**
-   - Run the provided Main.java using your preferred IDE (i.e. VS Code, IntelliJ IDE)
+   - Run the provided SocialMediaApp.java using your preferred IDE (i.e. VS Code, IntelliJ IDE)
    
 3. **Test the application:**
    - You can use tools like Postman, ThunderClient, or cURL to interact with the API endpoints listed in the "Features Implemented" section.
